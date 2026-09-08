@@ -18,3 +18,5 @@ It is **not** a general chat or social server.
 👉 Join the Discord: https://discord.gg/P2aZRYJZ
 
 If you are reviewing the protocol or contributing code, feel free to introduce yourself in `#start-here`.
+
+- [Surface glossary and display standard](SURFACE-GLOSSARY.md) — the words, numbers, and colors every Verisphere surface must share.
