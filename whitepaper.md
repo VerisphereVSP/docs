@@ -229,7 +229,7 @@ The two contributions cancel in the numerator and both remain in the pool: C rea
 
 #### 4.2.5 Time-Weighted Stake
 
-Every post keeps, per side, a running accumulator of `total × seconds` that is advanced on each stake change. A settlement window's time-weighted total is the accumulated area over the window divided by the window length; a read outside settlement uses the window elapsed so far. Parent totals, link stakes, and outgoing-link sums in Sections 4.2.2–4.2.3 are all taken time-weighted. This is the same proration rule that applies to a direct lot (Section 3.2) applied to evidence, so that a VSP is counted for exactly as long as it is committed, whether it sits on the post or on its evidence.
+Every post keeps, per side, a running accumulator of `total × seconds` that is advanced on each stake change. A settlement window's time-weighted total is the accumulated area over the window divided by the window length. The score a post *displays* is the instantaneous pool — the same formula evaluated on current totals — while the score it *settles on* is the window average of that pool; the two agree whenever the graph has been still for the window. Parent totals, link stakes, and outgoing-link sums in Sections 4.2.2–4.2.3 are all taken time-weighted. This is the same proration rule that applies to a direct lot (Section 3.2) applied to evidence, so that a VSP is counted for exactly as long as it is committed, whether it sits on the post or on its evidence.
 
 ### 4.3 Cycle Handling
 
