@@ -27,6 +27,13 @@ top-64 ranks by eligibility.
 withdraw every descendant within a 32M block; a child's cost must not depend
 on its hub's link count.
 
+**Measured (core #31, `test/SnapshotFlood.t.sol`):** a hub with 1,000 active
+incoming links settles for 10.46M gas (under half a Fuji block; mainnet's
+limit is 80M); a child of that hub settles for 214k, the same as a child of a
+1-link hub; the six-claim dense cycle's worst settlement is 333k (28.6M
+before); 300 links from inactive parents cost 1.49M and contribute nothing.
+Live on Fuji since 2026-10-02.
+
 ### 2. StakeEngine — Ghost Lots in SideQueue
 
 **Status:** Mitigated. Governance compaction implemented.
