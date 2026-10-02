@@ -1,5 +1,5 @@
 # Verisphere: A Truth-Staking Protocol
-### White Paper — v18.1 (October 2026)
+### White Paper — v18.2 (October 2026)
 **Date:** October 2026
 **Contact:** info@verisphere.co
 
@@ -239,7 +239,7 @@ When a post settles, it records a **snapshot**: the settlement epoch, the window
 
 Three consequences follow. First, settlement cost is bounded by the post's own incoming count and is independent of everything above it, so no graph can prevent a post from settling (Section 7.4). Second, a change anywhere in the graph reaches a claim one hop per epoch: a parent's new evidence is priced into the parent's own settlement for exactly the time it stood, and into its children's at their next settlement; because the keeper settles every post every epoch in topological order — claims, then their links, then the claims those links point to — a child is settled minutes after its parents within the same epoch, and only deeper levels lag by further epochs. Third, freshness is enforced where it matters: a user-path settlement (`stake`/`withdraw`) defers to the keeper with `SettleFirst` if any parent's snapshot is older than the previous epoch, so no one can settle a child against a deliberately stale parent; the keeper path always completes, using the newest snapshot available, and anyone may settle a neglected parent with one bounded transaction. A post with no incoming links is never deferred for freshness.
 
-Snapshots are introduced by upgrade; a one-time, permissionless, per-post seeding writes each existing post's first snapshot from its standing state before the first settlement that would read it, in topological order. A parent or link that has no snapshot yet — not seeded, never settled — contributes nothing to its children until it has one; it is simply absent from their pools, not counted at zero and not a reason to defer. Only the settling post itself is held to the record: a user-path settlement of a claim with incoming links and no snapshot of its own defers with `SettleFirst`, and the keeper path settles it, which writes the record.
+Snapshots are introduced by upgrade; a one-time, governance-run, per-post seeding writes each existing post's first snapshot from its standing state before the first settlement that would read it, in topological order (seeding is not open to third parties, so nobody can plant a post's first record at a transient stake level; a post that is not seeded gets its first snapshot, time-weighted, at its first settlement). A parent or link that has no snapshot yet — not seeded, never settled — contributes nothing to its children until it has one; it is simply absent from their pools, not counted at zero and not a reason to defer. Only the settling post itself is held to the record: a user-path settlement of a claim with incoming links and no snapshot of its own defers with `SettleFirst`, and the keeper path settles it, which writes the record.
 
 ### 4.3 Cycle Handling
 

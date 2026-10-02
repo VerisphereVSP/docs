@@ -27,12 +27,18 @@ top-64 ranks by eligibility.
 withdraw every descendant within a 32M block; a child's cost must not depend
 on its hub's link count.
 
-**Measured (core #31, `test/SnapshotFlood.t.sol`):** a hub with 1,000 active
-incoming links settles for 10.46M gas (under half a Fuji block; mainnet's
-limit is 80M); a child of that hub settles for 214k, the same as a child of a
-1-link hub; the six-claim dense cycle's worst settlement is 333k (28.6M
-before); 300 links from inactive parents cost 1.49M and contribute nothing.
-Live on Fuji since 2026-10-02.
+**Measured (core #31, `test/SnapshotFlood.t.sol`):** warm (one test
+transaction) a hub with 1,000 active incoming links settles for 10.46M gas; a
+child of that hub for 214k, the same as a child of a 1-link hub; the six-claim
+dense cycle's worst settlement is 333k (28.6M before); 300 links from inactive
+parents cost 1.49M and contribute nothing. **Cold** (`forge test --isolate`,
+one transaction per call — the reviewer's re-check measurement) the same
+points are 22.7M, 443k vs 440k, 592k and 4.1M: 71% of a Fuji block (32M) at
+the cap, 28% of mainnet's (80M). Hub cost is linear in incoming links, so the
+structural ceiling governance may raise the caps to is fixed at the measured
+point, `ABSOLUTE_MAX_LINKS_PER_CLAIM = 1000`; the test gates are calibrated to
+the cold numbers and CI runs the flood suite both ways. Live on Fuji since
+2026-10-02.
 
 ### 2. StakeEngine — Ghost Lots in SideQueue
 
