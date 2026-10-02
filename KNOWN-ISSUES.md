@@ -2,26 +2,30 @@
 
 ## Gas Concerns (Non-Urgent, Monitor)
 
-### 1. ScoreEngine.effectiveVSRay — Recursive Gas Cost
+### 1. ScoreEngine — settlement and view gas
 
-**Status:** Mitigated. Bounded fan-in implemented.
+**Status:** Redesigned (whitepaper v18, 2026-10). Superseded the earlier
+"bounded fan-in" mitigation.
 
-**Issue:** `effectiveVSRay` recursively calls `getIncoming` and
-`getOutgoing` across LinkGraph and StakeEngine, with depth up to 32.
-Each level loads dynamic arrays from storage. A claim with many
-incoming links from parents that each have many outgoing links could
-hit RPC node timeouts on view calls.
+**History:** Through v17.1 both the displayed score and settlement walked the
+claim's ancestry recursively (depth 32, memoized). The fan-in/fan-out limits
+(64) bounded the recursion but not the pre-cap scan over all incoming links
+(~18k gas per link, time-weighted read), and a parent's cost was inherited by
+every descendant. External review R3 (2026-10-01, F-D Critical) showed a
+flooded hub freezing itself and every descendant, and a six-claim dense cycle
+costing 28.6M gas to settle. Measured block gas limits: Avalanche mainnet 80M,
+Fuji 32M.
 
-**Mitigation (deployed):**
-- `maxIncomingEdges` (default 64): limits incoming edges processed per
-  `effectiveVSRay` call. Edges beyond this limit are silently skipped.
-- `maxOutgoingLinks` (default 64): limits outgoing links summed when
-  computing a parent's link stake distribution.
-- Both are governance-configurable via `ScoreEngine.setEdgeLimits()`.
+**Design (v18):** settlement reads stored per-post snapshots (whitepaper
+§4.2.6); cost is O(incoming) cold reads with no recursion, and the same
+stored values serve `getEdgeContribution` and the displayed score, so the
+recursive walk is retired. LinkGraph structural caps (1,000 / 1,000) become
+governance-settable; the ScoreEngine outgoing top-64 is removed; the incoming
+top-64 ranks by eligibility.
 
-**Remaining risk:** With both limits at 64 and depth 32, worst-case gas
-is still significant. If RPC timeouts occur, increase cache duration in
-the backend indexer and compute effective VS off-chain from indexed data.
+**Binding test:** flood one hub to the structural cap, then settle and
+withdraw every descendant within a 32M block; a child's cost must not depend
+on its hub's link count.
 
 ### 2. StakeEngine — Ghost Lots in SideQueue
 
